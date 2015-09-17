@@ -1,0 +1,28 @@
+{% extends "basic_template.html" %}
+
+{% block 'title'%}
+<title> Doctor {{doctor.name}} </title>
+{% endblock %}
+
+{% block 'contents' %}
+<h1> Doctor {{doctor.name}} </h1>
+<div>
+    <table>
+        {% for day in days %}
+        <tr>
+            <td>{{day.date}}</td>
+            {% for hour in day.hours%}
+            <td>
+                <div>{{hour.time.range}}</div>
+                {% if hour.occupied %}
+                <div>occupied</div>
+                {% else %}
+                <div><a href="">register</a></div>
+                {% endif %}
+            </td>        
+            {% endfor %}
+        </tr>
+        {% endfor %}
+   </table>
+</div>
+{% endblock %}

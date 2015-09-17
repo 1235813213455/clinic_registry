@@ -1,0 +1,19 @@
+{% extends "basic_template.html" %}
+
+{% block 'title'%}
+<title> List of doctors </title>
+{% endblock %}
+
+{% block 'contents' %}
+<h1> Doctors </h1>
+
+{% if doctors %}
+{% for doc in doctors %}
+<div>
+    <a href="{{doc.id}}/">{{doc.name}}</a>
+</div>
+{% endfor %}
+{% else %}
+<p> No doctors available </p>
+{% endif%}
+{% endblock %}
