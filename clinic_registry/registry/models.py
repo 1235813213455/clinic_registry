@@ -40,7 +40,6 @@ class Assignment(models.Model):
 
     time_string.short_description = "Time"
 
-
     def __str__(self):
         assignment_time = Assignment.HOUR_MAP[self.time]
         return "%s: %s (%s, %s)" % (self.doctor, self.patient, str(self.date), assignment_time["range"])

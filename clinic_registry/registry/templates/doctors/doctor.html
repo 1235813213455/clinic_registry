@@ -17,7 +17,7 @@
                 {% if hour.occupied %}
                 <div>occupied</div>
                 {% else %}
-                <div><a href="">register</a></div>
+                <div><a href="/registry/register?doctor={{doctor.id}}&time={{hour.time.id}}&date={{day.raw_date}}">register</a></div>
                 {% endif %}
             </td>        
             {% endfor %}
