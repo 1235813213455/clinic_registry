@@ -6,12 +6,16 @@ from django.http import HttpResponseRedirect
 from registry.models import Doctor, Patient, Assignment
 from registry.forms import RegisterForm 
 
+
 def index(request):
     doctors = Doctor.objects.all()
     return render_to_response('doctors/index.html', {'doctors': doctors})
 
+
 def doctor(request, doctor_id):
     doctor = get_object_or_404(Doctor, pk=doctor_id)
+
+    # select only assignments for current doctor and for range of 7 days
     today = datetime.now()
     seven_days_later = today + timedelta(days=7)
     week_assignment_cursor = Assignment.objects \
@@ -19,6 +23,7 @@ def doctor(request, doctor_id):
                 .filter(date__gte=today) \
                 .filter(date__lt=seven_days_later)
 
+    # caching already existing assignments for easy later access
     week_assignments = {}
     for assignment in week_assignment_cursor:
         date = assignment.date.strftime("%Y/%m/%d")
@@ -27,8 +32,7 @@ def doctor(request, doctor_id):
 
         week_assignments[date].add(assignment.time)
 
-    print(week_assignments)
-
+    # filling assignment table
     days = []
     for i in range(7):
         day = {}
@@ -45,6 +49,7 @@ def doctor(request, doctor_id):
         day["hours"].sort(key=lambda x: x["time"]["id"])
 
     return render_to_response('doctors/doctor.html', {'days': days, "doctor": doctor})
+
 
 def register(request):
     if request.method == 'POST':
@@ -89,6 +94,7 @@ def register(request):
                              'assignment_date': date, 'assignment_time': time})
 
     return render(request, 'doctors/register_form.html', {'form': form})
+
 
 def time_occupied(request):
     return render_to_response('doctors/time_occupied.html')
