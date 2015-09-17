@@ -1,18 +1,21 @@
 {% extends "basic_template.html" %}
+{% load staticfiles %}
 
 {% block 'title'%}
 <title> Doctor {{doctor.name}} </title>
+<link rel="stylesheet" type="text/css" href="{% static 'registry/styles.css' %}"/>
 {% endblock %}
 
 {% block 'contents' %}
+<a href="/registry">all doctors</a>
 <h1> Doctor {{doctor.name}} </h1>
 <div>
-    <table>
+    <table class="table">
         {% for day in days %}
         <tr>
             <td>{{day.date}}</td>
             {% for hour in day.hours%}
-            <td>
+            <td {% if hour.occupied %} class="occupied_time" {% else %} class="free_time" {% endif %}>
                 <div>{{hour.time.range}}</div>
                 {% if hour.occupied %}
                 <div>occupied</div>

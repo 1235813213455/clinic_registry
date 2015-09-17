@@ -1,6 +1,9 @@
+{% load staticfiles %}
+
 <html>
     <head>
         {% block 'title' %} {% endblock %}
+        <link rel="stylesheet" type="text/css" href="{% static 'registry/bootstrap/bootstrap.min.css' %}"/>
     </head>
 
     <body>

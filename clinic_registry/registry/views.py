@@ -85,10 +85,10 @@ def register(request):
         time = Assignment.HOUR_MAP.get(int(time_id), None)["range"]
 
         date = request.GET.get("date", -1)
-        form = RegisterForm({'doctor_id': doctor.id, 'doctor_name': doctor.name, 
+        form = RegisterForm(initial={'doctor_id': doctor.id, 'doctor_name': doctor.name, 
                              'assignment_date': date, 'assignment_time': time})
 
-        return render(request, 'doctors/register_form.html', {'form': form})
+    return render(request, 'doctors/register_form.html', {'form': form})
 
 def time_occupied(request):
     return render_to_response('doctors/time_occupied.html')
