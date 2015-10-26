@@ -4,7 +4,7 @@ from django.shortcuts import render, render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 
 from registry.models import Doctor, Patient, Assignment
-from registry.forms import RegisterForm 
+from registry.forms import RegisterForm
 
 
 def index(request):
@@ -19,9 +19,9 @@ def doctor(request, doctor_id):
     today = datetime.now()
     seven_days_later = today + timedelta(days=7)
     week_assignment_cursor = Assignment.objects \
-                .filter(doctor__id=doctor_id) \
-                .filter(date__gte=today) \
-                .filter(date__lt=seven_days_later)
+        .filter(doctor__id=doctor_id) \
+        .filter(date__gte=today) \
+        .filter(date__lt=seven_days_later)
 
     # caching already existing assignments for easy later access
     week_assignments = {}
@@ -43,9 +43,11 @@ def doctor(request, doctor_id):
         days.append(day)
         for hour_id in Assignment.HOUR_MAP.keys():
             occupied = True if week_assignments.get(current_day, None) \
-                                and hour_id in week_assignments[current_day] else False
-            day["hours"].append({"time": Assignment.HOUR_MAP[hour_id], 
+                and hour_id in week_assignments[current_day] else False
+
+            day["hours"].append({"time": Assignment.HOUR_MAP[hour_id],
                                 "occupied": occupied})
+
         day["hours"].sort(key=lambda x: x["time"]["id"])
 
     return render_to_response('doctors/doctor.html', {'days': days, "doctor": doctor})
@@ -57,7 +59,8 @@ def register(request):
         if form.is_valid():
             doctor = get_object_or_404(Doctor, pk=form.cleaned_data["doctor_id"])
             assignment_date = datetime.strptime(form.cleaned_data["assignment_date"], "%Y-%m-%d")
-            assignment_time = [v for v in Assignment.HOUR_MAP.values() if v["range"] == form.cleaned_data["assignment_time"]][0]
+            assignment_time = [v for v in Assignment.HOUR_MAP.values()
+                               if v["range"] == form.cleaned_data["assignment_time"]][0]
 
             patient = Patient()
             patient.first_name = form.cleaned_data["first_name"]
@@ -65,11 +68,11 @@ def register(request):
             patient.father_name = form.cleaned_data["father_name"]
             patient.save()
 
-            #check if assignment already registered
+            # check if assignment already registered
             num_results = Assignment.objects.filter(doctor__id=doctor.id) \
-                                            .filter(date=assignment_date) \
-                                            .filter(time=assignment_time["id"]) \
-                                            .count()
+                .filter(date=assignment_date) \
+                .filter(time=assignment_time["id"]) \
+                .count()
 
             if num_results > 0:
                 return HttpResponseRedirect('/registry/time_occupied_error/')
@@ -80,7 +83,7 @@ def register(request):
                 new_assignment.date = assignment_date
                 new_assignment.time = assignment_time["id"]
                 new_assignment.save()
-            
+
                 return HttpResponseRedirect('/registry/' + str(doctor.id) + '/')
     else:
         doctor_id = request.GET.get("doctor", -1)
@@ -90,8 +93,10 @@ def register(request):
         time = Assignment.HOUR_MAP.get(int(time_id), None)["range"]
 
         date = request.GET.get("date", -1)
-        form = RegisterForm(initial={'doctor_id': doctor.id, 'doctor_name': doctor.name, 
-                             'assignment_date': date, 'assignment_time': time})
+        form = RegisterForm(initial={'doctor_id': doctor.id,
+                                     'doctor_name': doctor.name,
+                                     'assignment_date': date,
+                                     'assignment_time': time})
 
     return render(request, 'doctors/register_form.html', {'form': form})
 
